@@ -3,6 +3,7 @@
  * ---
  * Author: Frank Harris (frank@hirefrank.com)
  * Initial Date: Aug 26, 2018
+ * MIT License
  *
  * This script syncs the user's Equinox Calendar with their Google Calendar on an
  * ongoing basis. It supports personal training sessions and group fitness classes.
