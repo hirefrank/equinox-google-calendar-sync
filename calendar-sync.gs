@@ -17,10 +17,11 @@
  * calendar (optional)            the name of the calendar (user's default)
  *
  * Instructions:
- * 1. Create cookie property and any other desired properties from above. 
+ * 1. Create a new Google App Script (https://script.google.com/home/my) project 
+ *    with the contents of this script.
+ * 2. Create cookie property and any other desired properties from above. 
  *    (File > Project properties > Script properties)
- * 2. Run the setup function. (Run > Run function > setup)
- * 3. There is no step three. 
+ * 3. Run the setup function. (Run > Run function > setup)
  * 
  * More info:
  * https://github.com/hirefrank/equinox-google-calendar-sync/blob/master/README.md
