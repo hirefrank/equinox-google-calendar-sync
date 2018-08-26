@@ -5,6 +5,7 @@
 function setup() {
   const HOURS_FREQUENCY = PropertiesService.getScriptProperties().getProperty('hours_frequency') || 4;
   ScriptApp.newTrigger("calendarSync").timeBased().everyHours(HOURS_FREQUENCY).create();
+  calendarSync();
 }
 
 function calendarSync() {
