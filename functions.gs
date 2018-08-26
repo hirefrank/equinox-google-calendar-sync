@@ -46,11 +46,10 @@ function addEvents() {
     
     if (e.status !== undefined) {
       if (e.status !== null && 'localId' in e.status) description = e.status['gridItemType'] + ' #' +  e.status['localId'] + description;
-    } 
-    
-    if (e.classInstanceId !== undefined) {
+    } else if (e.classInstanceId !== undefined) {
       var d = JSON.parse(classDetails(e.classInstanceId.toFixed(0)));
       if (d.status !== undefined && d.status['hasReservation'] == false) name = '[HOLD] ' + name;
+      description = "This class requires a reservation. Booking is available 26 hours in advance." + description;
     }
     
     var event = CalendarApp.getDefaultCalendar().createEvent(name, start, end,{location: location, description: description});
