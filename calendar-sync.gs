@@ -5,8 +5,9 @@
  * Initial Date: Aug 26, 2018
  * MIT License
  *
- * This script syncs the user's Equinox Calendar with their Google Calendar on an
- * ongoing basis. It supports personal training sessions and group fitness classes.
+ * This script syncs the user's Equinox Calendar with their Google Calendar on 
+ * an ongoing basis. It supports (at least) personal training sessions and 
+ * group fitness classes.
  *
  * property name                  value
  * -------------                  -----
