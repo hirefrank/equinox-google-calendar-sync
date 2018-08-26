@@ -2,7 +2,12 @@
  * Description
  ***********************************************************************************/
 
-function main() {
+function setup() {
+  const HOURS_FREQUENCY = PropertiesService.getScriptProperties().getProperty('hours_frequency') || 4;
+  ScriptApp.newTrigger("calendarSync").timeBased().everyHours(HOURS_FREQUENCY).create();
+}
+
+function calendarSync() {
   const DAYS_IN_ADVANCE = PropertiesService.getScriptProperties().getProperty('days_in_advance') || 45;
   
   var script_url = 'https://script.google.com/macros/d/' + ScriptApp.getScriptId() + '/edit';
@@ -50,12 +55,15 @@ function addEvents(from_date, to_date, footer) {
       if (e.status !== null && 'localId' in e.status) description = e.status['gridItemType'] + ' #' +  e.status['localId'] + description;
     } else if (e.classInstanceId !== undefined) {
       var d = JSON.parse(classDetails(e.classInstanceId.toFixed(0)));
+      var bt = new Date(d.status['reservationStartDate']).toLocaleString();
+
       if (d.status !== undefined && d.status['hasReservation'] == false) name = '[HOLD] ' + name;
-      description = "This class requires a reservation. Booking is available 26 hours in advance." + description;
+      description = 'This class requires a reservation. Reservations open on ' + bt + '.' + description;
     }
     
     var event = CalendarApp.getDefaultCalendar().createEvent(name, start, end,{location: location, description: description});
     console.log('Added Event Id: ' + event.getId());
+    Utilities.sleep(1000);
   }
 }
 
