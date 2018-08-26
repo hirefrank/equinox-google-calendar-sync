@@ -1,22 +1,24 @@
-/* Do not edit below */
-
-var SCRIPT_ID = ScriptApp.getScriptId();
-var SCRIPT_URL = 'https://script.google.com/macros/d/' + SCRIPT_ID + '/edit';
-var FOOTER = '\n\n---\n<a href="' + SCRIPT_URL + '">Equinox Google Calendar Sync</a>';
-var API_BASE_URL = 'https://api.equinox.com';
-var FROM_DATE = new Date();
-var TO_DATE = new Date();
+/***********************************************************************************
+ * Description
+ ***********************************************************************************/
 
 function main() {
-  TO_DATE.setDate(TO_DATE.getDate() + DAYS_IN_ADVANCE);
+  const DAYS_IN_ADVANCE = PropertiesService.getScriptProperties().getProperty('days_in_advance') || 45;
   
-  deleteEvents();
+  var script_url = 'https://script.google.com/macros/d/' + ScriptApp.getScriptId() + '/edit';
+  var footer = '\n\n---\n<a href="' + script_url + '">Equinox Google Calendar Sync</a>';
+  
+  var from_date = new Date();
+  var to_date = new Date();
+  to_date.setDate(to_date.getDate() + DAYS_IN_ADVANCE);
+  
+  deleteEvents(from_date, to_date, footer);
   Utilities.sleep(5000);
-  addEvents();
+  addEvents(from_date, to_date, footer);
 }
 
-function addEvents() {
-  var url = '/v3/me/calendar/?fromDate=' + formatDate(FROM_DATE) + '&toDate=' + formatDate(TO_DATE);  
+function addEvents(from_date, to_date, footer) {
+  var url = '/v3/me/calendar/?fromDate=' + formatDate(from_date) + '&toDate=' + formatDate(to_date);  
   var json_data = JSON.parse(apiFetch(url, 'get'));
   
   for (e in json_data.events) {
@@ -42,7 +44,7 @@ function addEvents() {
     var start = new Date(e.startDate);
     var end = new Date(e.endDate);
     var location = 'Equinox ' + e.facilityName;
-    var description = FOOTER;
+    var description = footer;
     
     if (e.status !== undefined) {
       if (e.status !== null && 'localId' in e.status) description = e.status['gridItemType'] + ' #' +  e.status['localId'] + description;
@@ -57,13 +59,8 @@ function addEvents() {
   }
 }
 
-function classDetails(class_id){ 
-  var url = '/v3/classes/' + class_id;
-  return apiFetch(url, 'get'); 
-}
-
-function deleteEvents() {
-  var events = CalendarApp.getDefaultCalendar().getEvents(FROM_DATE, TO_DATE, {search: FOOTER.replace(/(<([^>]+)>)/ig,'')});
+function deleteEvents(from_date, to_date, footer) {
+  var events = CalendarApp.getDefaultCalendar().getEvents(from_date, to_date, {search: footer.replace(/(<([^>]+)>)/ig,'')});
   for (e in events) {
     events[e].deleteEvent();
     console.log('Deleted Event Id: ' + events[e].getId());
@@ -71,7 +68,15 @@ function deleteEvents() {
   }
 }
 
+function classDetails(class_id){ 
+  var url = '/v3/classes/' + class_id;
+  return apiFetch(url, 'get'); 
+}
+
 function apiFetch(api, method, form) {
+  const COOKIE = PropertiesService.getScriptProperties().getProperty('cookie');
+  const API_BASE_URL = 'https://api.equinox.com';
+  
   var form = form || '';
   var headers = {                                                              
     'Cookie': COOKIE,
