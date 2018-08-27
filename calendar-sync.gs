@@ -39,15 +39,43 @@
  */
 
 function setup() {
-  // if no property override, use the default: every 4 hours
-  const HOURS_FREQUENCY = PropertiesService.getScriptProperties().getProperty('hours_frequency') || 4;
-  
-  // create the trigger
-  ScriptApp.newTrigger("calendarSync").timeBased().everyHours(HOURS_FREQUENCY).create();
-  
-  // run the initial sync
-  calendarSync();
+  if (checkCookie() == true) {
+    // if no property override, use the default: every 4 hours
+    const HOURS_FREQUENCY = PropertiesService.getScriptProperties().getProperty('hours_frequency') || 4;
+    
+    // create the trigger
+    ScriptApp.newTrigger("calendarSync").timeBased().everyHours(HOURS_FREQUENCY).create();
+    
+    // run the initial sync
+    calendarSync();
+  }
 }
+
+/**
+ * Checks to make sure the cookie script property has been set properly
+ */
+
+function checkCookie() {
+  var c = false;
+  // verifies the property exist
+  if (PropertiesService.getScriptProperties().getProperty('cookie') == null) {
+    console.log('Cookie script property does not exist.');
+  } else {
+    var c = PropertiesService.getScriptProperties().getProperty('cookie'); 
+    var s = 'EqAuth.v1=';
+    // verifies the property contain 'EqAuth.v1='
+    // todo: should check to make sure it begins with this string
+    if (c.match(s)) {
+      c = true;
+    } else {
+      // prepends the s string to the property
+      PropertiesService.getScriptProperties().setProperty('cookie', s + c);
+      c = true;
+    }
+  }
+  return c;
+}
+
 
 /**
  * Main function that intiates the sync.
@@ -89,7 +117,7 @@ function addEvents(from_date, to_date, footer) {
   // contruct the api endpoint
   var url = '/v3/me/calendar/?fromDate=' + formatDate(from_date) + '&toDate=' + formatDate(to_date);  
   var json_data = JSON.parse(apiFetch(url, 'get'));
-  
+
   // for each event
   for (e in json_data.events) {
     var e = json_data.events[e];
