@@ -76,7 +76,6 @@ function checkCookie() {
   return c;
 }
 
-
 /**
  * Main function that intiates the sync.
  * ---
